@@ -1,8 +1,8 @@
 /*
  * Scramjet service worker based on the official Interstellar setup:
  * https://github.com/UseInterstellar/Interstellar/blob/main/static/sw.js
- * Interstellar is AGPL-3.0-or-later; see LICENSE-INTERSTELLAR.
- * Scramjet is AGPL-3.0-only; see LICENSE-SCRAMJET.
+ * Interstellar-derived code is covered by the included LICENSE-INTERSTELLAR.
+ * Scramjet itself is installed from its npm package; its package license applies.
  */
 importScripts("/assets/scramjet/scramjet.all.js");
 const { ScramjetServiceWorker } = $scramjetLoadWorker();
