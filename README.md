@@ -1,6 +1,6 @@
 # Napoleon V
 
-A minimal multi-tab browser shell powered by Scramjet and Wisp, with persistent light/dark appearance.
+A minimal multi-tab browser shell powered directly by Scramjet, BareMux, Epoxy, and Wisp.
 
 ## Run locally
 
@@ -15,7 +15,7 @@ Open `http://localhost:3000`.
 
 Run the automated checks with `npm test`; run syntax checks with `npm run check`.
 
-The first startup downloads the Scramjet browser assets through `@mercuryworkshop/proxy-bootstrap`, so the server needs outbound internet access. Keep the process running: Wisp uses WebSockets.
+The server serves Scramjet, BareMux, and Epoxy assets directly from their installed npm packages. There is no `proxy-bootstrap` integration. Keep the process running: Wisp uses WebSockets.
 
 ## Deploy on Railway
 
@@ -33,7 +33,7 @@ Railway supplies the `PORT` environment variable automatically.
 - Focus the address bar with `⌘L` / `Ctrl+L`.
 - Switch between dark and light appearance with the top-right theme button; the choice is saved locally.
 
-The tab workflow and general browser UX take inspiration from the feature set of [Interstellar](https://github.com/UseInterstellar/Interstellar). Napoleon V keeps its own interface and Scramjet bootstrap integration; it does not import Interstellar's cloaking, analytics, or full app bundle.
+The minimal layout and direct Scramjet/Wisp setup take inspiration from [Interstellar](https://github.com/UseInterstellar/Interstellar). Napoleon V does not import Interstellar's analytics or full app bundle. Interstellar-derived code is attributed and its AGPL license is included in `LICENSE-INTERSTELLAR`; Scramjet's license is in `LICENSE-SCRAMJET`.
 
 ## Health check
 
