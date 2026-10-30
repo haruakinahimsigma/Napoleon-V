@@ -31,7 +31,7 @@ Railway supplies the `PORT` environment variable automatically.
 - Open a tab with the `+` button or `⌘T` / `Ctrl+T`.
 - Close the current tab with `⌘W` / `Ctrl+W`.
 - Focus the address bar with `⌘L` / `Ctrl+L`.
-- Switch between dark and light appearance with the top-right theme button; the choice is saved locally.
+- Cycle the accent colour with the top-right button; the choice is saved locally.
 
 The minimal layout and direct Scramjet/Wisp setup take inspiration from [Interstellar](https://github.com/UseInterstellar/Interstellar). Napoleon V does not import Interstellar's analytics or full app bundle. Interstellar-derived code is attributed and its AGPL license is included in `LICENSE-INTERSTELLAR`; Scramjet's license is in `LICENSE-SCRAMJET`.
 
