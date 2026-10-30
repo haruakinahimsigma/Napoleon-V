@@ -12,9 +12,13 @@ app.get("/health", (_req, res) => {
 });
 
 app.use((req, res, next) => {
-  if (routeRequest(req, res)) return;
+  // Serve the upstream Scramjet demo service worker from public/sw.js.
+  // The bootstrap package still serves the controller, core bundle, WASM,
+  // transport client, bootstrap initializer, and Wisp WebSocket route.
+  if (req.path !== "/sw.js" && routeRequest(req, res)) return;
   next();
 });
+
 app.use(express.static("public", { extensions: ["html"] }));
 app.get("*", (_req, res) => res.sendFile("index.html", { root: "public" }));
 
