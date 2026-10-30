@@ -4,7 +4,7 @@
  * https://github.com/UseInterstellar/Interstellar
  */
 self.__deps = {
-  baremux: "/baremux/index.mjs",
+  baremux: "/baremux-bridge.mjs",
   baremuxWorker: "/baremux/worker.js",
   epoxy: "/epoxy/index.mjs"
 };
