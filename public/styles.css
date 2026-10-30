@@ -145,3 +145,28 @@ button { color: inherit; cursor: pointer; -webkit-tap-highlight-color: transpare
   .current-url { padding: 0 8px; gap: 6px; font-size: 10px; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+/* Interstellar-inspired usability additions: tabs and a persistent light/dark theme. */
+.header-actions { display: flex; align-items: center; gap: 13px; }
+.header-button { width: 32px; height: 32px; border: 1px solid var(--line); border-radius: 11px; background: var(--glass); color: var(--text); font-size: 17px; }
+.tab-strip { display: flex; align-items: center; gap: 7px; min-height: 48px; padding: 7px 10px; overflow-x: auto; border-bottom: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.025); }
+.tab-item { display: flex; align-items: center; gap: 4px; flex: 0 0 auto; max-width: 190px; min-width: 95px; padding: 3px 5px 3px 10px; border: 1px solid transparent; border-radius: 12px; background: rgba(255,255,255,.035); }
+.tab-item.active { border-color: var(--line); background: rgba(255,255,255,.12); }
+.tab-select { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; flex: 1; text-align: left; border: 0; padding: 5px 2px; background: transparent; color: var(--text); font-size: 12px; }
+.tab-close { flex: none; width: 23px; height: 23px; border: 0; border-radius: 8px; background: transparent; color: var(--muted); font-size: 17px; line-height: 1; }
+.tab-close:hover { background: rgba(255,255,255,.12); color: var(--text); }
+#frame-shell { position: relative; flex: 1; min-height: 0; background: #fff; }
+.tab-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #fff; }
+.tab-frame[hidden] { display: none !important; }
+:root[data-theme="light"] { color-scheme: light; --text: #20222a; --muted: #686c79; --glass: rgba(255,255,255,.62); --glass-strong: rgba(255,255,255,.8); --line: rgba(35,39,55,.13); --shadow: 0 24px 80px rgba(43,48,70,.12); }
+:root[data-theme="light"] body { background: radial-gradient(ellipse at 50% 5%, rgba(152,176,232,.32), transparent 42%), radial-gradient(ellipse at 8% 80%, rgba(194,176,237,.24), transparent 38%), linear-gradient(145deg, #f2f4fb, #e5e9f4 70%); }
+:root[data-theme="light"] .brand-mark { background: linear-gradient(145deg, #343849, #626a83); color: white; }
+:root[data-theme="light"] .hero-mark { background: linear-gradient(145deg, rgba(255,255,255,.85), rgba(255,255,255,.35)); border-color: rgba(255,255,255,.8); }
+:root[data-theme="light"] .search input { color: var(--text); }
+:root[data-theme="light"] .search input::placeholder { color: #747887; }
+:root[data-theme="light"] .tool-button, :root[data-theme="light"] .current-url { color: var(--text); }
+@media (max-width: 560px) {
+  .header-actions { gap: 8px; }
+  .tab-strip { min-height: 43px; padding: 5px 7px; }
+  .tab-item { min-width: 84px; max-width: 145px; }
+}
