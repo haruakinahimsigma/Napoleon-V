@@ -1,6 +1,6 @@
 # Napoleon V
 
-A dark, minimal browser shell powered by Scramjet and Wisp.
+A minimal multi-tab browser shell powered by Scramjet and Wisp, with persistent light/dark appearance.
 
 ## Run locally
 
@@ -25,6 +25,15 @@ The first startup downloads the Scramjet browser assets through `@mercuryworksho
 4. Deploy and open the generated public domain.
 
 Railway supplies the `PORT` environment variable automatically.
+
+## Browser controls
+
+- Open a tab with the `+` button or `⌘T` / `Ctrl+T`.
+- Close the current tab with `⌘W` / `Ctrl+W`.
+- Focus the address bar with `⌘L` / `Ctrl+L`.
+- Switch between dark and light appearance with the top-right theme button; the choice is saved locally.
+
+The tab workflow and general browser UX take inspiration from the feature set of [Interstellar](https://github.com/UseInterstellar/Interstellar). Napoleon V keeps its own interface and Scramjet bootstrap integration; it does not import Interstellar's cloaking, analytics, or full app bundle.
 
 ## Health check
 
