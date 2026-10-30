@@ -1,8 +1,7 @@
 /*
- * Navigation/tab workflow is an original adaptation inspired by Interstellar's
- * multi-tab browser experience. Interstellar: https://github.com/UseInterstellar/Interstellar
- * Scramjet integration adapted from the official starter:
- * https://github.com/MercuryWorkshop/scramjet/tree/main/packages/create-proxy-app/templates/default
+ * Direct Scramjet + Wisp setup adapted from the public Interstellar implementation:
+ * https://github.com/UseInterstellar/Interstellar
+ * Interstellar is AGPL-3.0-or-later; see LICENSE-INTERSTELLAR.
  */
 import { normalizeInput } from "./url-utils.js";
 
@@ -14,11 +13,13 @@ const frameShell = document.getElementById("frame-shell");
 const frameUrl = document.getElementById("sj-frame-url");
 const errorPanel = document.getElementById("error-panel");
 const engineStatus = document.getElementById("engine-status");
+const status = document.querySelector(".status");
 const backButton = document.getElementById("back-button");
 const forwardButton = document.getElementById("forward-button");
 const tabStrip = document.getElementById("tab-strip");
 
 let controller;
+let scramjet;
 let tabs = [];
 let activeTabId = null;
 let tabSequence = 0;
@@ -27,7 +28,7 @@ let errorTimer;
 
 function setStatus(message, state = "ready") {
   engineStatus.textContent = message;
-  engineStatus.dataset.state = state;
+  status.dataset.state = state;
 }
 
 function activeTab() {
@@ -78,14 +79,40 @@ function renderTabs() {
   }
 }
 
-async function initializeController() {
+async function initializeEngine() {
   if (controller) return;
-  setStatus("Starting", "loading");
-  if (typeof window.initBootstrap !== "function") {
-    throw new Error("Scramjet did not load. Open /bootstrap-init.js to check the deployment.");
+  setStatus("Starting engine", "loading");
+
+  if (!("serviceWorker" in navigator)) {
+    throw new Error("This browser does not support service workers, which Scramjet needs.");
   }
-  controller = await window.initBootstrap();
-  if (typeof controller.wait === "function") await controller.wait();
+  const registration = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+  await navigator.serviceWorker.ready;
+  if (!navigator.serviceWorker.controller) {
+    await Promise.race([
+      new Promise((resolve) => navigator.serviceWorker.addEventListener("controllerchange", resolve, { once: true })),
+      new Promise((resolve) => setTimeout(resolve, 2500)),
+    ]);
+  }
+
+  const [{ BareMuxConnection }, { ScramjetController }] = await Promise.all([
+    import(window.__deps.baremux),
+    window.$scramjetLoadController(),
+  ]);
+  scramjet = new ScramjetController(self.__scramjet$config);
+  await scramjet.init();
+
+  const protocol = location.protocol === "https:" ? "wss" : "ws";
+  const wisp = `${protocol}://${location.host}/wisp/`;
+  const connection = new BareMuxConnection(window.__deps.baremuxWorker);
+  await connection.setTransport(window.__deps.epoxy, { wisp });
+  controller = scramjet;
+
+  window.__urls = {
+    encodeUrl: (url) => scramjet.encodeUrl(url),
+    decodeUrl: (url) => scramjet.decodeUrl(url),
+  };
+  setStatus("Ready", "ready");
 }
 
 function makeFrame(tab) {
@@ -96,6 +123,7 @@ function makeFrame(tab) {
   iframe.hidden = true;
   frameShell.append(iframe);
   tab.iframe = iframe;
+
   const plugins = [];
   if (window.$scramjetUtils?.HttpCachePlugin) plugins.push(new window.$scramjetUtils.HttpCachePlugin());
   if (window.$scramjetUtils?.UrlWatcherPlugin) {
@@ -112,30 +140,31 @@ function makeFrame(tab) {
 
 async function activateTab(id) {
   activeTabId = id;
-  for (const tab of tabs) tab.iframe.hidden = tab.id !== id;
+  for (const tab of tabs) if (tab.iframe) tab.iframe.hidden = tab.id !== id;
   const tab = activeTab();
   renderTabs();
   browser.hidden = false;
   home.hidden = true;
   address.value = tab?.url || "";
-  frameUrl.textContent = tab?.url || "New Tab";
+  frameUrl.textContent = tab?.url || "New tab";
   updateHistoryButtons();
-  setStatus("Ready", "ready");
 }
 
 async function createTab(url = "") {
   const tab = { id: ++tabSequence, url: "", history: [], historyIndex: -1, iframe: null, frame: null };
   tabs.push(tab);
   try {
-    await initializeController();
+    await initializeEngine();
     makeFrame(tab);
     await activateTab(tab.id);
     if (url) await navigate(url);
   } catch (error) {
     tabs = tabs.filter((item) => item.id !== tab.id);
+    tab.iframe?.remove();
     renderTabs();
-    setStatus("Error", "error");
-    showError(`Couldn't start a new tab. ${error?.message || "Check the deployment logs."}`);
+    setStatus("Engine error", "error");
+    showError(error?.message || "The engine could not start. Check the deployment logs.");
+    console.error("Napoleon V engine error:", error);
   }
 }
 
@@ -150,8 +179,7 @@ function closeTab(id) {
     home.hidden = false;
     address.value = "";
   } else if (activeTabId === id) {
-    const next = tabs[Math.min(index, tabs.length - 1)];
-    activateTab(next.id);
+    activateTab(tabs[Math.min(index, tabs.length - 1)].id);
   } else {
     renderTabs();
   }
@@ -167,12 +195,13 @@ async function navigate(rawUrl, { addHistory = true } = {}) {
   frameUrl.textContent = url;
   setStatus("Loading", "loading");
   try {
-    if (!controller) await initializeController();
+    await initializeEngine();
     let tab = activeTab();
     if (!tab) {
       await createTab();
       tab = activeTab();
     }
+    if (!tab) throw new Error("Could not create a tab.");
     if (!tab.frame) makeFrame(tab);
     home.hidden = true;
     browser.hidden = false;
@@ -190,8 +219,8 @@ async function navigate(rawUrl, { addHistory = true } = {}) {
     setStatus("Ready", "ready");
   } catch (error) {
     if (sequence !== navigationSequence) return;
-    setStatus("Error", "error");
-    showError(`Couldn't open page. ${error?.message || "Check the deployment logs and try again."}`);
+    setStatus("Navigation error", "error");
+    showError(`Couldn't open page: ${error?.message || "Check the deployment logs."}`);
     console.error("Napoleon V navigation error:", error);
   }
 }
@@ -200,81 +229,59 @@ form.addEventListener("submit", (event) => {
   event.preventDefault();
   navigate(address.value);
 });
-
-document.querySelectorAll("[data-url]").forEach((button) => {
-  button.addEventListener("click", () => navigate(button.dataset.url));
-});
-
+document.querySelectorAll("[data-url]").forEach((button) => button.addEventListener("click", () => navigate(button.dataset.url)));
 document.getElementById("new-tab-button").addEventListener("click", () => createTab());
-
 document.getElementById("home-button").addEventListener("click", () => {
-  navigationSequence += 1;
+  navigationSequence++;
   browser.hidden = true;
   home.hidden = false;
   address.value = "";
   setStatus("Ready", "ready");
   address.focus();
 });
-
 document.getElementById("close-button").addEventListener("click", () => {
   const tab = activeTab();
   if (tab) closeTab(tab.id);
-  else { browser.hidden = true; home.hidden = false; }
 });
-
 document.getElementById("reload-button").addEventListener("click", () => {
   const tab = activeTab();
   if (tab?.url) navigate(tab.url, { addHistory: false });
 });
-
 backButton.addEventListener("click", () => {
   const tab = activeTab();
   if (!tab || tab.historyIndex <= 0) return;
-  tab.historyIndex -= 1;
-  const url = tab.history[tab.historyIndex];
+  const url = tab.history[--tab.historyIndex];
   updateHistoryButtons();
   navigate(url, { addHistory: false });
 });
-
 forwardButton.addEventListener("click", () => {
   const tab = activeTab();
   if (!tab || tab.historyIndex >= tab.history.length - 1) return;
-  tab.historyIndex += 1;
-  const url = tab.history[tab.historyIndex];
+  const url = tab.history[++tab.historyIndex];
   updateHistoryButtons();
   navigate(url, { addHistory: false });
 });
 
+const accents = ["teal", "blue", "purple", "rose", "green"];
 document.getElementById("theme-button").addEventListener("click", () => {
-  const light = document.documentElement.dataset.theme !== "light";
-  document.documentElement.dataset.theme = light ? "light" : "dark";
-  localStorage.setItem("napoleon-theme", light ? "light" : "dark");
-  document.getElementById("theme-button").textContent = light ? "☾" : "☼";
+  const current = document.documentElement.dataset.accent || "teal";
+  const next = accents[(accents.indexOf(current) + 1) % accents.length];
+  document.documentElement.dataset.accent = next;
+  localStorage.setItem("napoleon-accent", next);
 });
-const savedTheme = localStorage.getItem("napoleon-theme");
-if (savedTheme === "light") {
-  document.documentElement.dataset.theme = "light";
-  document.getElementById("theme-button").textContent = "☾";
-}
+const savedAccent = localStorage.getItem("napoleon-accent");
+if (savedAccent && accents.includes(savedAccent)) document.documentElement.dataset.accent = savedAccent;
 
 document.addEventListener("keydown", (event) => {
-  const typing = event.target instanceof HTMLElement &&
-    (event.target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(event.target.tagName));
+  const typing = event.target instanceof HTMLElement && (event.target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(event.target.tagName));
   if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "l") {
-    event.preventDefault();
-    home.hidden = false;
-    browser.hidden = true;
-    address.focus();
-    address.select();
+    event.preventDefault(); address.focus(); address.select();
   } else if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "t") {
-    event.preventDefault();
-    createTab();
+    event.preventDefault(); createTab();
   } else if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "w" && activeTab()) {
-    event.preventDefault();
-    closeTab(activeTabId);
+    event.preventDefault(); closeTab(activeTabId);
   } else if (!typing && event.key === "Escape" && !browser.hidden) {
-    browser.hidden = true;
-    home.hidden = false;
+    browser.hidden = true; home.hidden = false;
   }
 });
 
@@ -282,17 +289,13 @@ const initialUrl = new URL(location.href).searchParams.get("goto");
 if (initialUrl) {
   history.replaceState(null, "", location.pathname);
   createTab(initialUrl);
-} else {
-  updateHistoryButtons();
 }
-
-fetch("/health")
-  .then((response) => {
-    if (!response.ok) throw new Error("Health check failed");
-    return response.json();
-  })
-  .then((health) => { if (health.ok) setStatus("Ready", "ready"); })
-  .catch(() => {
-    setStatus("Offline", "error");
-    showError("The server health check failed. Check the deployment logs.");
-  });
+fetch("/health").then((response) => {
+  if (!response.ok) throw new Error("Health check failed");
+  return response.json();
+}).then((health) => {
+  if (health.ok) setStatus("Ready", "ready");
+}).catch(() => {
+  setStatus("Offline", "error");
+  showError("The server health check failed.");
+});
