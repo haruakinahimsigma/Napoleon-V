@@ -29,20 +29,28 @@ function updateHistoryButtons() {
 }
 
 function showError(message) {
-  errorPanel.textContent = `Couldn't open that page: ${message}`;
+  errorPanel.textContent = message;
   errorPanel.hidden = false;
   window.clearTimeout(errorTimer);
-  errorTimer = window.setTimeout(() => { errorPanel.hidden = true; }, 7000);
+  errorTimer = window.setTimeout(() => { errorPanel.hidden = true; }, 8000);
 }
 
 async function initialize() {
   if (controller && frame) return;
-  setStatus("STARTING ENGINE", "loading");
+  setStatus("Starting", "loading");
+
   if (typeof window.initBootstrap !== "function") {
-    throw new Error("Scramjet bootstrap did not load. Check the server logs and /bootstrap-init.js.");
+    throw new Error("Scramjet did not load. Open /bootstrap-init.js to check the deployment.");
   }
 
   controller = await window.initBootstrap();
+
+  // Scramjet's service worker must be ready before createFrame/go.
+  // Without this wait, the first navigation can land on a blank/404 frame.
+  if (typeof controller.wait === "function") {
+    await controller.wait();
+  }
+
   const plugins = [];
   if (window.$scramjetUtils?.HttpCachePlugin) {
     plugins.push(new window.$scramjetUtils.HttpCachePlugin());
@@ -57,8 +65,9 @@ async function initialize() {
       return new URL(`/?goto=${encodeURIComponent(url.href)}`, location.origin);
     }));
   }
+
   frame = controller.createFrame(frameElement, { plugins });
-  setStatus("ENGINE READY", "ready");
+  setStatus("Ready", "ready");
 }
 
 async function navigate(rawUrl, { addHistory = true } = {}) {
@@ -71,7 +80,8 @@ async function navigate(rawUrl, { addHistory = true } = {}) {
   const sequence = ++navigationSequence;
   errorPanel.hidden = true;
   address.value = url;
-  setStatus("LOADING PAGE", "loading");
+  frameUrl.textContent = url;
+  setStatus("Loading", "loading");
 
   try {
     await initialize();
@@ -81,7 +91,7 @@ async function navigate(rawUrl, { addHistory = true } = {}) {
     if (sequence !== navigationSequence) return;
 
     frameUrl.textContent = url;
-    setStatus("ENGINE READY", "ready");
+    setStatus("Ready", "ready");
     if (addHistory) {
       historyStack = historyStack.slice(0, historyIndex + 1);
       historyStack.push(url);
@@ -90,8 +100,8 @@ async function navigate(rawUrl, { addHistory = true } = {}) {
     updateHistoryButtons();
   } catch (error) {
     if (sequence !== navigationSequence) return;
-    setStatus("ENGINE ERROR", "error");
-    showError(error?.message || "The proxy engine could not initialize.");
+    setStatus("Error", "error");
+    showError(`Couldn't open page. ${error?.message || "Check the deployment logs and try again."}`);
     console.error("Napoleon V navigation error:", error);
   }
 }
@@ -110,7 +120,7 @@ document.getElementById("home-button").addEventListener("click", () => {
   browser.hidden = true;
   home.hidden = false;
   address.value = "";
-  setStatus("ENGINE READY", "ready");
+  setStatus("Ready", "ready");
   address.focus();
 });
 
@@ -118,7 +128,7 @@ document.getElementById("close-button").addEventListener("click", () => {
   navigationSequence += 1;
   browser.hidden = true;
   home.hidden = false;
-  setStatus("ENGINE READY", "ready");
+  setStatus("Ready", "ready");
 });
 
 document.getElementById("reload-button").addEventListener("click", () => {
@@ -169,9 +179,9 @@ fetch("/health")
     return response.json();
   })
   .then((health) => {
-    if (health.ok) setStatus("ENGINE READY", "ready");
+    if (health.ok) setStatus("Ready", "ready");
   })
   .catch(() => {
-    setStatus("SERVER CHECK FAILED", "error");
-    showError("The backend health check failed. Check the deployment logs.");
+    setStatus("Offline", "error");
+    showError("The server health check failed. Check the deployment logs.");
   });
