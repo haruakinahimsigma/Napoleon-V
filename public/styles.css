@@ -11,7 +11,7 @@ button{cursor:pointer}
 .brand small{display:block;margin-top:4px;font:9px 'DM Mono',monospace;color:#8b97ac;letter-spacing:.19em}
 .status,.eyebrow,.section-label,.footnote{font:10px 'DM Mono',monospace;letter-spacing:.12em}
 .status{color:#a8b3c7;display:flex;align-items:center;gap:9px}
-.status-dot{height:7px;width:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px #b6f36a88}
+.status-dot{height:7px;width:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px #b6f36a88;flex:none}.status:has([data-state="loading"]) .status-dot{background:#f4c66a;box-shadow:0 0 12px #f4c66a88;animation:pulse 1s ease-in-out infinite}.status:has([data-state="error"]) .status-dot{background:#ff7777;box-shadow:0 0 12px #ff777788}@keyframes pulse{50%{opacity:.35}}
 .home{width:min(790px,calc(100% - 40px));margin:clamp(64px,10vh,110px) auto 0}
 .eyebrow{color:var(--accent);display:flex;align-items:center;gap:10px}
 .eyebrow-line{width:25px;height:1px;background:var(--accent)}
@@ -38,7 +38,7 @@ h1 span{color:var(--accent)}
 .footnote{display:flex;justify-content:space-between;gap:15px;color:#526078;font-size:9px;margin:46px 0 25px}.footnote i{color:var(--accent);font-style:normal}
 .browser{height:calc(100vh - 78px);display:flex;flex-direction:column}
 .browser-toolbar{display:flex;gap:7px;align-items:center;padding:10px 16px;background:#0c111b;border-bottom:1px solid var(--line)}
-.tool-button{width:35px;height:35px;border:1px solid var(--line);background:#111927;border-radius:8px;color:#b8c4d7;font-size:18px}.tool-button:hover{border-color:#64748b;color:white}.tool-button.close{font-size:23px;color:#d1d8e4}
+.tool-button{width:35px;height:35px;border:1px solid var(--line);background:#111927;border-radius:8px;color:#b8c4d7;font-size:18px}.tool-button:hover:not(:disabled){border-color:#64748b;color:white}.tool-button:disabled{opacity:.35;cursor:not-allowed}.tool-button.close{font-size:23px;color:#d1d8e4}
 .current-url{height:35px;display:flex;align-items:center;gap:10px;flex:1;min-width:0;padding:0 12px;background:#080c14;border:1px solid var(--line);border-radius:8px;color:#9daac0;font:11px 'DM Mono',monospace;overflow:hidden}
 .current-url span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lock{color:var(--accent)}
 #frame-shell{flex:1;min-height:0;background:white}#sj-frame{width:100%;height:100%;border:0;background:white}
