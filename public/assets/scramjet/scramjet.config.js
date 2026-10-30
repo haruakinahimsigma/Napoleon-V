@@ -1,7 +1,7 @@
 /*
  * Direct Scramjet runtime configuration, following Interstellar's public setup.
  * https://github.com/UseInterstellar/Interstellar/blob/main/static/assets/scramjet/scramjet.config.js
- * Copyright notices and AGPL terms are documented in LICENSE-SCRAMJET and LICENSE-INTERSTELLAR.
+ * Interstellar-derived code is attributed and covered by LICENSE-INTERSTELLAR.
  */
 self.__scramjet$config = {
   prefix: "/uv/scramjet/",
