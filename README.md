@@ -13,6 +13,8 @@ npm start
 
 Open `http://localhost:3000`.
 
+Run the automated checks with `npm test`; run syntax checks with `npm run check`.
+
 The first startup downloads the Scramjet browser assets through `@mercuryworkshop/proxy-bootstrap`, so the server needs outbound internet access. Keep the process running: Wisp uses WebSockets.
 
 ## Deploy on Railway
