@@ -3,48 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#101116">
+  <meta name="theme-color" content="#101d2b">
   <meta name="robots" content="noindex,nofollow">
   <title>Napoleon V</title>
   <link rel="stylesheet" href="/styles.css">
-  <script src="/bootstrap-init.js"></script>
+  <script src="/assets/scramjet/scramjet.all.js"></script>
+  <script src="/assets/scramjet/scramjet.config.js"></script>
+  <script src="/vendor.js"></script>
 </head>
 <body>
-  <div class="ambient ambient-one"></div>
-  <div class="ambient ambient-two"></div>
-
-  <header class="topbar glass">
-    <a class="brand" href="/" aria-label="Napoleon V home">
-      <span class="brand-mark">N</span>
-      <span class="brand-name">Napoleon <span>V</span></span>
-    </a>
-    <div class="header-actions"><button id="theme-button" class="header-button" type="button" title="Toggle appearance" aria-label="Toggle appearance">☼</button><div class="status" aria-live="polite"><span class="status-dot"></span><span id="engine-status" data-state="ready">Ready</span></div></div>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Napoleon V home"><span class="brand-mark">N</span><span>Napoleon <b>V</b></span></a>
+    <div class="header-actions">
+      <button id="theme-button" class="icon-button" type="button" title="Change accent colour" aria-label="Change accent colour">◐</button>
+      <span class="status"><i id="status-dot"></i><span id="engine-status">Ready</span></span>
+    </div>
   </header>
 
   <main class="home" id="home">
-    <div class="hero-mark" aria-hidden="true"><span>N</span></div>
-    <form id="sj-form" class="search glass">
+    <h1>Napoleon <span>V</span></h1>
+    <p class="subtitle">A little internet, your way.</p>
+    <form id="sj-form" class="search">
       <span class="search-icon" aria-hidden="true">⌕</span>
-      <input id="sj-address" type="text" autocomplete="url" spellcheck="false" placeholder="Search or enter URL" aria-label="Search or enter a website address">
-      <button type="submit" aria-label="Go"><span>↑</span></button>
+      <input id="sj-address" type="text" autocomplete="url" spellcheck="false" placeholder="Search or enter a URL" aria-label="Search or enter a website address">
+      <button type="submit" aria-label="Go">↵</button>
     </form>
-
-    <nav class="favorites glass" aria-label="Favorites">
-      <button class="favorite" data-url="https://www.wikipedia.org" aria-label="Wikipedia" title="Wikipedia"><span class="favorite-icon wiki">W</span></button>
-      <button class="favorite" data-url="https://www.nasa.gov" aria-label="NASA" title="NASA"><span class="favorite-icon nasa">N</span></button>
-      <button class="favorite" data-url="https://www.archive.org" aria-label="Internet Archive" title="Internet Archive"><span class="favorite-icon archive">A</span></button>
-      <button class="favorite" data-url="https://example.com" aria-label="Example site" title="Example site"><span class="favorite-icon web">↗</span></button>
+    <nav class="favorites" aria-label="Quick links">
+      <button class="favorite" data-url="https://www.wikipedia.org"><span class="favorite-icon wiki">W</span><span>Wikipedia</span></button>
+      <button class="favorite" data-url="https://www.youtube.com"><span class="favorite-icon youtube">▶</span><span>YouTube</span></button>
+      <button class="favorite" data-url="https://www.nasa.gov"><span class="favorite-icon nasa">N</span><span>NASA</span></button>
+      <button class="favorite" data-url="https://www.archive.org"><span class="favorite-icon archive">A</span><span>Archive</span></button>
     </nav>
   </main>
 
-  <section id="browser" class="browser glass" hidden>
+  <section id="browser" class="browser" hidden>
     <div class="browser-toolbar">
       <button id="home-button" class="tool-button" title="Home" aria-label="Home">⌂</button>
-      <button id="back-button" class="tool-button" title="Back" aria-label="Back">‹</button>
-      <button id="forward-button" class="tool-button" title="Forward" aria-label="Forward">›</button>
-      <button id="reload-button" class="tool-button" title="Reload" aria-label="Reload">↻</button><button id="new-tab-button" class="tool-button" title="New tab (⌘T)" aria-label="New tab">+</button>
-      <div class="current-url"><span class="lock">◈</span><span id="sj-frame-url">Ready</span></div>
-      <button id="close-button" class="tool-button close" title="Close" aria-label="Close">×</button>
+      <button id="back-button" class="tool-button" title="Back" aria-label="Back" disabled>‹</button>
+      <button id="forward-button" class="tool-button" title="Forward" aria-label="Forward" disabled>›</button>
+      <button id="reload-button" class="tool-button" title="Reload" aria-label="Reload">↻</button>
+      <div class="current-url"><span id="sj-frame-url">New tab</span></div>
+      <button id="new-tab-button" class="tool-button" title="New tab (⌘T)" aria-label="New tab">+</button>
+      <button id="close-button" class="tool-button" title="Close tab" aria-label="Close tab">×</button>
     </div>
     <div id="tab-strip" class="tab-strip" aria-label="Open tabs"></div>
     <div id="frame-shell"></div>
