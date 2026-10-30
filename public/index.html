@@ -2,49 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#080b12">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101116">
   <meta name="robots" content="noindex,nofollow">
-  <title>Napoleon V — Browser</title>
+  <title>Napoleon V</title>
   <link rel="stylesheet" href="/styles.css">
   <script src="/bootstrap-init.js"></script>
 </head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="/" aria-label="Napoleon V home"><span class="brand-mark">N</span><span>NAPOLEON<span class="brand-v"> V</span><small>PERSONAL WEB BROWSER</small></span></a>
-    <div class="status"><span class="status-dot"></span> <span id="engine-status" data-state="ready">ENGINE READY</span></div>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <header class="topbar glass">
+    <a class="brand" href="/" aria-label="Napoleon V home">
+      <span class="brand-mark">N</span>
+      <span class="brand-name">Napoleon <span>V</span></span>
+    </a>
+    <div class="status" aria-live="polite">
+      <span class="status-dot"></span>
+      <span id="engine-status" data-state="ready">Ready</span>
+    </div>
   </header>
 
   <main class="home" id="home">
-    <div class="eyebrow"><span class="eyebrow-line"></span> YOUR WINDOW TO THE WEB</div>
-    <h1>Move at your<br><span>own velocity.</span></h1>
-    <p class="subtitle">A minimal browser experience, powered by Scramjet.</p>
-
-    <form id="sj-form" class="search">
+    <div class="hero-mark" aria-hidden="true"><span>N</span></div>
+    <form id="sj-form" class="search glass">
       <span class="search-icon" aria-hidden="true">⌕</span>
-      <input id="sj-address" type="text" autocomplete="url" spellcheck="false" placeholder="Search or enter a website address…" aria-label="Search or enter a website address">
-      <button type="submit" aria-label="Go">GO <span>↗</span></button>
+      <input id="sj-address" type="text" autocomplete="url" spellcheck="false" placeholder="Search or enter URL" aria-label="Search or enter a website address">
+      <button type="submit" aria-label="Go"><span>↑</span></button>
     </form>
-    <p class="hint">Enter a full URL or a search phrase.</p>
 
-    <div class="section-label">QUICK LAUNCH <span>01 — 04</span></div>
-    <div class="quick-grid">
-      <button class="quick-card" data-url="https://www.wikipedia.org"><span class="quick-icon wiki">W</span><span><b>Wikipedia</b><small>Knowledge library</small></span><span class="arrow">↗</span></button>
-      <button class="quick-card" data-url="https://www.nasa.gov"><span class="quick-icon nasa">N</span><span><b>NASA</b><small>Explore the universe</small></span><span class="arrow">↗</span></button>
-      <button class="quick-card" data-url="https://www.archive.org"><span class="quick-icon archive">A</span><span><b>Internet Archive</b><small>Digital collections</small></span><span class="arrow">↗</span></button>
-      <button class="quick-card" data-url="https://example.com"><span class="quick-icon web">↗</span><span><b>Example site</b><small>Test your connection</small></span><span class="arrow">↗</span></button>
-    </div>
-    <div class="footnote"><span>SCRAMJET INTERCEPTION ENGINE</span><span>NAPOLEON V <i>•</i> BUILT FOR THE OPEN WEB</span></div>
+    <nav class="favorites glass" aria-label="Favorites">
+      <button class="favorite" data-url="https://www.wikipedia.org" aria-label="Wikipedia" title="Wikipedia"><span class="favorite-icon wiki">W</span></button>
+      <button class="favorite" data-url="https://www.nasa.gov" aria-label="NASA" title="NASA"><span class="favorite-icon nasa">N</span></button>
+      <button class="favorite" data-url="https://www.archive.org" aria-label="Internet Archive" title="Internet Archive"><span class="favorite-icon archive">A</span></button>
+      <button class="favorite" data-url="https://example.com" aria-label="Example site" title="Example site"><span class="favorite-icon web">↗</span></button>
+    </nav>
   </main>
 
-  <section id="browser" class="browser" hidden>
+  <section id="browser" class="browser glass" hidden>
     <div class="browser-toolbar">
-      <button id="home-button" class="tool-button" title="Home">⌂</button>
-      <button id="back-button" class="tool-button" title="Back">←</button>
-      <button id="forward-button" class="tool-button" title="Forward">→</button>
-      <button id="reload-button" class="tool-button" title="Reload">↻</button>
+      <button id="home-button" class="tool-button" title="Home" aria-label="Home">⌂</button>
+      <button id="back-button" class="tool-button" title="Back" aria-label="Back">‹</button>
+      <button id="forward-button" class="tool-button" title="Forward" aria-label="Forward">›</button>
+      <button id="reload-button" class="tool-button" title="Reload" aria-label="Reload">↻</button>
       <div class="current-url"><span class="lock">◈</span><span id="sj-frame-url">Ready</span></div>
-      <button id="close-button" class="tool-button close" title="Close browser">×</button>
+      <button id="close-button" class="tool-button close" title="Close" aria-label="Close">×</button>
     </div>
     <div id="frame-shell"><iframe id="sj-frame" title="Proxied website" referrerpolicy="no-referrer"></iframe></div>
   </section>
