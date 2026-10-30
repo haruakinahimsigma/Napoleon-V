@@ -6,10 +6,12 @@
   "description": "Napoleon V — a self-hosted browser shell powered by Scramjet",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "test": "node --test",
+    "check": "node --check server.js && node --check public/index.js && node --check public/url-utils.js"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "dependencies": {
     "@mercuryworkshop/proxy-bootstrap": "^0.0.5",
