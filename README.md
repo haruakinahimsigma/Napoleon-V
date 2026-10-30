@@ -33,7 +33,7 @@ Railway supplies the `PORT` environment variable automatically.
 - Focus the address bar with `⌘L` / `Ctrl+L`.
 - Cycle the accent colour with the top-right button; the choice is saved locally.
 
-The minimal layout and direct Scramjet/Wisp setup take inspiration from [Interstellar](https://github.com/UseInterstellar/Interstellar). Napoleon V does not import Interstellar's analytics or full app bundle. Interstellar-derived code is attributed and its AGPL license is included in `LICENSE-INTERSTELLAR`; Scramjet's license is in `LICENSE-SCRAMJET`.
+The minimal layout and direct Scramjet/Wisp setup take inspiration from [Interstellar](https://github.com/UseInterstellar/Interstellar). Napoleon V does not import Interstellar's analytics or full app bundle. Interstellar-derived code is attributed and the upstream license text is included in `LICENSE-INTERSTELLAR`. Scramjet is installed from its published npm package and retains that package's own license.
 
 ## Health check
 
