@@ -1,3 +1,10 @@
+/*
+ * Scramjet controller/bootstrap integration adapted from the official
+ * create-proxy-app starter:
+ * https://github.com/MercuryWorkshop/scramjet/tree/main/packages/create-proxy-app/templates/default
+ * Copyright (c) Mercury Workshop. Licensed under AGPL-3.0-only.
+ */
+
 import { normalizeInput } from "./url-utils.js";
 
 const form = document.getElementById("sj-form");
