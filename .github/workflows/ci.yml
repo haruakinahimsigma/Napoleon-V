@@ -16,10 +16,33 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
       - name: Run URL utility tests
         run: npm test
       - name: Check JavaScript syntax
+        run: npm run check
+      - name: Start server and smoke-test endpoints
         run: |
-          node --check server.js
-          node --check public/index.js
-          node --check public/url-utils.js
+          npm start > /tmp/napoleon-v.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          ready=0
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:3000/health > /tmp/napoleon-health.json; then
+              ready=1
+              break
+            fi
+            sleep 2
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/napoleon-v.log
+            echo "Server failed to become healthy."
+            exit 1
+          fi
+          grep -q '"ok":true' /tmp/napoleon-health.json
+          curl --fail --silent http://127.0.0.1:3000/ > /tmp/napoleon-home.html
+          grep -q 'NAPOLEON' /tmp/napoleon-home.html
+          curl --fail --silent http://127.0.0.1:3000/bootstrap-init.js > /tmp/napoleon-bootstrap.js
+          test -s /tmp/napoleon-bootstrap.js
+          echo "Health, home page, and Scramjet bootstrap endpoints passed."
